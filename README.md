@@ -44,4 +44,4 @@ This project was designed to simulate a real-world business intelligence environ
 
 ## Forecasting Preview
 
-![Forecast](screenshots/image5.png)
+![Forecast](screenshots/image4.png)
