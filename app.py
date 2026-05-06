@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from src.forecasting import create_forecast
+from src.ai_assistant import ask_ai_question
 
 st.set_page_config(
     page_title="AI Business Intelligence Platform",
@@ -138,3 +139,28 @@ if len(date_columns) > 0 and len(numeric_columns) > 0:
 
 else:
     st.info("Forecasting requires at least one date column and one numeric column.")
+
+st.subheader("AI Business Intelligence Assistant")
+
+st.write(
+    "Ask natural language questions about the dataset, business performance, trends, and KPIs."
+)
+
+user_question = st.text_input(
+    "Ask a business question",
+    placeholder="Example: What are the biggest trends in this dataset?"
+)
+
+if st.button("Ask AI Assistant"):
+
+    if user_question.strip() == "":
+        st.warning("Please enter a question first.")
+
+    else:
+        with st.spinner("Analyzing dataset..."):
+            try:
+                ai_response = ask_ai_question(df, user_question)
+                st.write(ai_response)
+
+            except Exception as e:
+                st.error(f"AI assistant error: {e}")
