@@ -1,3 +1,6 @@
+## Live Demo
+
+[Launch Application](https://ai-business-intelligence-forecasting-platform-8evpi9ndjmto48ob.streamlit.app/)
 # AI-Powered Business Intelligence & Forecasting Platform
 
 An end-to-end analytics and forecasting platform built using Python, SQL workflows, machine learning, and interactive business intelligence dashboards.
@@ -34,3 +37,11 @@ This project was designed to simulate a real-world business intelligence environ
 - Advanced forecasting models
 - Cloud deployment
 - User authentication system
+
+## Dashboard Preview
+
+![Dashboard](screenshots/dashboard.png)
+
+## Forecasting Preview
+
+![Forecast](screenshots/forecast.png)
