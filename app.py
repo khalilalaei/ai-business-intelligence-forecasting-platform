@@ -325,6 +325,57 @@ with visual_tab:
             )
 
             st.plotly_chart(region_chart, use_container_width=True)
+    
+            if "Sales" in filtered_df.columns and "Profit" in filtered_df.columns:
+                scatter_chart = px.scatter(
+                    filtered_df,
+                    x="Sales",
+                    y="Profit",
+                    color="Category" if "Category" in filtered_df.columns else None,
+                    title="Sales vs Profit Analysis",
+                    hover_data=[
+                        col for col in ["Product Name", "Region", "Segment"]
+                        if col in filtered_df.columns
+                    ]
+                )
+
+                st.plotly_chart(scatter_chart, use_container_width=True)
+
+            if "Product Name" in filtered_df.columns and "Sales" in filtered_df.columns:
+                top_products = (
+                    filtered_df.groupby("Product Name")["Sales"]
+                    .sum()
+                    .sort_values(ascending=False)
+                    .head(10)
+                    .reset_index()
+                )
+
+                top_products_chart = px.bar(
+                    top_products,
+                    x="Sales",
+                    y="Product Name",
+                    orientation="h",
+                    title="Top 10 Products by Sales"
+                )
+
+                st.plotly_chart(top_products_chart, use_container_width=True)
+
+            if "Region" in filtered_df.columns and "Profit" in filtered_df.columns:
+                profit_region = (
+                    filtered_df.groupby("Region")["Profit"]
+                    .sum()
+                    .sort_values(ascending=False)
+                    .reset_index()
+                )
+
+                profit_region_chart = px.bar(
+                    profit_region,
+                    x="Region",
+                    y="Profit",
+                    title="Profit by Region"
+                )
+
+                st.plotly_chart(profit_region_chart, use_container_width=True)
 
 # -----------------------------
 # Forecasting Tab
@@ -462,6 +513,19 @@ LIMIT 10
 with data_tab:
 
     st.subheader("Filtered Dataset Preview")
+
+    st.write(
+        "Download or preview the filtered dataset currently powering the dashboard."
+    )
+
+    csv_data = filtered_df.to_csv(index=False).encode("utf-8")
+
+    st.download_button(
+        label="Download Filtered Data as CSV",
+        data=csv_data,
+        file_name="filtered_business_data.csv",
+        mime="text/csv"
+    )
 
     st.dataframe(filtered_df.head(100))
 
