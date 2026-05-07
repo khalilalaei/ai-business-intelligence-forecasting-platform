@@ -68,3 +68,43 @@ Answer:
     )
 
     return response.choices[0].message.content
+
+def generate_business_summary(df):
+
+    dataset_summary = summarize_dataset(df)
+
+    prompt = f"""
+You are an executive business intelligence analyst.
+
+Generate a professional executive summary report based on the dataset summary below.
+
+Include:
+- major business trends
+- KPI insights
+- performance observations
+- category/region insights
+- forecasting interpretation
+- operational recommendations
+
+Dataset Summary:
+{dataset_summary}
+
+Executive Report:
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a professional business intelligence executive analyst."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.3
+    )
+
+    return response.choices[0].message.content

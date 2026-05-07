@@ -3,8 +3,12 @@ import pandas as pd
 import plotly.express as px
 
 from src.forecasting import create_forecast
-from src.ai_assistant import ask_ai_question
+from src.ai_assistant import (
+    ask_ai_question,
+    generate_business_summary
+)
 from src.database import load_data_to_database, run_query
+from src.report_generator import generate_business_report
 
 st.set_page_config(
     page_title="AI Business Intelligence Platform",
@@ -170,7 +174,42 @@ with overview_tab:
             st.success(
                 f"{category_summary.iloc[0]['Category']} generated the highest sales at ${category_summary.iloc[0]['Sales']:,.2f}."
             )
+        st.subheader("AI Executive Business Report")
 
+    st.write(
+        "Generate an AI-powered executive summary report based on filtered business data."
+    )
+
+    if st.button("Generate Business Report"):
+
+        with st.spinner("Generating executive report..."):
+
+            try:
+
+                report_summary = generate_business_summary(filtered_df)
+
+                st.success(
+                    "Business report generated successfully."
+                )
+
+                st.write(report_summary)
+
+                pdf_path = generate_business_report(
+                    report_summary
+                )
+
+                with open(pdf_path, "rb") as pdf_file:
+
+                    st.download_button(
+                        label="Download PDF Report",
+                        data=pdf_file,
+                        file_name="business_report.pdf",
+                        mime="application/pdf"
+                    )
+
+            except Exception as e:
+                st.error(f"Report generation error: {e}")
+                
 # -----------------------------
 # Visualizations Tab
 # -----------------------------
