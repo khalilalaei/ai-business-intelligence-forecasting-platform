@@ -15,7 +15,58 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown(
+    """
+    <style>
+
+    .main {
+        background-color: #0E1117;
+        color: white;
+    }
+
+    section[data-testid="stSidebar"] {
+        background-color: #161B22;
+    }
+
+    div[data-testid="metric-container"] {
+        background-color: #161B22;
+        border: 1px solid #30363D;
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    div[data-testid="metric-container"] label {
+        color: #8B949E !important;
+    }
+
+    div[data-testid="metric-container"] div {
+        color: white !important;
+    }
+
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 20px;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        background-color: #161B22;
+        border-radius: 10px;
+        padding: 10px 18px;
+        color: white;
+    }
+
+    .stTabs [aria-selected="true"] {
+        background-color: #238636 !important;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 st.title("AI-Powered Business Intelligence & Forecasting Platform")
+st.caption(
+    "Enterprise analytics platform featuring AI-powered forecasting, SQL querying, KPI dashboards, and executive reporting."
+)
 
 st.write(
     "An interactive business intelligence platform for KPI tracking, sales analytics, forecasting, and AI-powered insights."
@@ -209,7 +260,7 @@ with overview_tab:
 
             except Exception as e:
                 st.error(f"Report generation error: {e}")
-                
+
 # -----------------------------
 # Visualizations Tab
 # -----------------------------
