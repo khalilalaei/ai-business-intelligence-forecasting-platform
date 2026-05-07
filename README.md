@@ -14,6 +14,8 @@ An end-to-end analytics and forecasting platform built using Python, SQL workflo
 - Interactive Plotly visualizations
 - Filtered dataset preview
 - Streamlit deployment with live demo
+- SQLite database integration for structured data storage
+- SQL Explorer for custom business analytics queries
 
 ## Tech Stack
 
