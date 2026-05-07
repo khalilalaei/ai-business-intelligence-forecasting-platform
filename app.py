@@ -4,7 +4,7 @@ import plotly.express as px
 
 from src.forecasting import create_forecast
 from src.ai_assistant import ask_ai_question
-
+from src.database import load_data_to_database, run_query
 
 st.set_page_config(
     page_title="AI Business Intelligence Platform",
@@ -24,6 +24,8 @@ def load_data():
 
 
 df = load_data()
+
+load_data_to_database(df)
 
 # -----------------------------
 # Sidebar Filters
@@ -103,13 +105,14 @@ numeric_columns = filtered_df.select_dtypes(include="number").columns.tolist()
 # Tabs
 # -----------------------------
 
-overview_tab, visual_tab, forecast_tab, ai_tab, data_tab = st.tabs(
+overview_tab, visual_tab, forecast_tab, ai_tab, sql_tab, data_tab = st.tabs(
     [
-        "Overview",
-        "Visualizations",
-        "Forecasting",
-        "AI Assistant",
-        "Data Preview"
+    "Overview",
+    "Visualizations",
+    "Forecasting",
+    "AI Assistant",
+    "SQL Explorer",
+    "Data Preview"
     ]
 )
 
@@ -323,6 +326,44 @@ with ai_tab:
 
                 except Exception as e:
                     st.error(f"AI assistant error: {e}")
+
+# -----------------------------
+# SQL Explorer Tab
+# -----------------------------
+
+with sql_tab:
+
+    st.subheader("SQL Data Explorer")
+
+    st.write(
+        "Run SQL queries against the business dataset stored in SQLite."
+    )
+
+    default_query = """
+SELECT *
+FROM sales_data
+LIMIT 10
+"""
+
+    sql_query = st.text_area(
+        "Enter SQL Query",
+        value=default_query,
+        height=200
+    )
+
+    if st.button("Run SQL Query"):
+
+        try:
+            query_result = run_query(sql_query)
+
+            st.success(
+                f"Query returned {len(query_result)} rows."
+            )
+
+            st.dataframe(query_result)
+
+        except Exception as e:
+            st.error(f"SQL Error: {e}")
 
 # -----------------------------
 # Data Preview Tab
