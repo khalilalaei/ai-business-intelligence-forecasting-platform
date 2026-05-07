@@ -40,8 +40,5 @@ This project was designed to simulate a real-world business intelligence environ
 
 ## Dashboard Preview
 
-![Dashboard](screenshots/image.png)
+![Dashboard](screenshots/image6.png)
 
-## Forecasting Preview
-
-![Forecast](screenshots/image4.png)
