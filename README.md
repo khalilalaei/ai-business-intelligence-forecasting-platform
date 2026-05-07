@@ -7,13 +7,13 @@ An end-to-end analytics and forecasting platform built using Python, SQL workflo
 
 ## Features
 
-- Interactive KPI dashboards
-- Automated ETL and data processing workflows
-- Machine learning forecasting models
-- Business trend visualization
-- Revenue and category analysis
-- Forecast generation using Scikit-learn
-- Interactive Streamlit web application
+- Interactive KPI dashboard with dynamic sidebar filters
+- Category, region, segment, and date range filtering
+- Machine learning forecasting using Scikit-learn
+- AI-powered business intelligence assistant using OpenAI API
+- Interactive Plotly visualizations
+- Filtered dataset preview
+- Streamlit deployment with live demo
 
 ## Tech Stack
 
