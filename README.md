@@ -31,16 +31,11 @@ An end-to-end analytics and forecasting platform built using Python, SQL workflo
 
 This project was designed to simulate a real-world business intelligence environment by combining analytics engineering, forecasting, dashboarding, and AI-driven insights into a single platform.
 
-## Future Improvements
 
-- SQL database integration
-- AI-powered analytics chatbot
-- Real-time API data ingestion
-- Advanced forecasting models
-- Cloud deployment
-- User authentication system
-
-## Dashboard Preview
+## Visuals
 
 ![Dashboard](screenshots/image6.png)
-
+![Dashboard](screenshots/image5.png)
+![Dashboard](screenshots/image7.png)
+![Dashboard](screenshots/image8.png)
+![Dashboard](screenshots/image9.png)
