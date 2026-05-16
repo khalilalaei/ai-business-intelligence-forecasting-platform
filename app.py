@@ -154,8 +154,12 @@ if len(date_columns) > 0:
         ]
 
 
-numeric_columns = filtered_df.select_dtypes(include="number").columns.tolist()
+excluded_numeric_columns = ["Row ID", "Postal Code"]
 
+numeric_columns = [
+    col for col in filtered_df.select_dtypes(include="number").columns.tolist()
+    if col not in excluded_numeric_columns
+]
 # -----------------------------
 # Tabs
 # -----------------------------
