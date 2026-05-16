@@ -191,7 +191,10 @@ with overview_tab:
         total_profit = filtered_df["Profit"].sum()
         col2.metric("Total Profit", f"${total_profit:,.2f}")
     elif len(numeric_columns) > 1:
-        col2.metric("Secondary Value", f"{filtered_df[numeric_columns[1]].sum():,.2f}")
+        col2.metric(
+            numeric_columns[1],
+            f"{filtered_df[numeric_columns[1]].sum():,.2f}"
+    )
 
     if "Order ID" in filtered_df.columns:
         total_orders = filtered_df["Order ID"].nunique()
