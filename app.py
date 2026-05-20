@@ -11,7 +11,7 @@ from src.database import load_data_to_database, run_query
 from src.report_generator import generate_business_report
 
 st.set_page_config(
-    page_title="Business Intelligence Platform",
+    page_title="Business Intelligence & Forecasting Platform",
     layout="wide"
 )
 
@@ -64,12 +64,13 @@ st.markdown(
 )
 
 st.title("Business Intelligence & Forecasting Platform")
+
 st.caption(
-    "Enterprise analytics platform featuring forecasting, SQL querying, KPI dashboards, and executive reporting."
+    "Enterprise analytics platform featuring forecasting, SQL querying, KPI dashboards, automated reporting, and business intelligence workflows."
 )
 
 st.write(
-    "An interactive business intelligence platform for KPI tracking, sales analytics, forecasting, and AI-powered insights."
+    "An interactive business intelligence platform for KPI tracking, sales analytics, forecasting, reporting, and natural language business insights."
 )
 
 
@@ -82,10 +83,6 @@ df = load_data()
 
 load_data_to_database(df)
 
-# -----------------------------
-# Sidebar Filters
-# -----------------------------
-
 st.sidebar.header("Dashboard Filters")
 
 filtered_df = df.copy()
@@ -96,7 +93,6 @@ if "Category" in df.columns:
         options=sorted(df["Category"].dropna().unique()),
         default=sorted(df["Category"].dropna().unique())
     )
-
     filtered_df = filtered_df[filtered_df["Category"].isin(selected_categories)]
 
 if "Region" in df.columns:
@@ -105,7 +101,6 @@ if "Region" in df.columns:
         options=sorted(df["Region"].dropna().unique()),
         default=sorted(df["Region"].dropna().unique())
     )
-
     filtered_df = filtered_df[filtered_df["Region"].isin(selected_regions)]
 
 if "Segment" in df.columns:
@@ -114,13 +109,14 @@ if "Segment" in df.columns:
         options=sorted(df["Segment"].dropna().unique()),
         default=sorted(df["Segment"].dropna().unique())
     )
-
     filtered_df = filtered_df[filtered_df["Segment"].isin(selected_segments)]
 
 date_columns = [
     col for col in df.columns
     if "date" in col.lower()
 ]
+
+sidebar_date_column = None
 
 if len(date_columns) > 0:
     sidebar_date_column = date_columns[0]
@@ -153,31 +149,23 @@ if len(date_columns) > 0:
             (filtered_df[sidebar_date_column] <= pd.to_datetime(end_date))
         ]
 
-
 excluded_numeric_columns = ["Row ID", "Postal Code"]
 
 numeric_columns = [
     col for col in filtered_df.select_dtypes(include="number").columns.tolist()
     if col not in excluded_numeric_columns
 ]
-# -----------------------------
-# Tabs
-# -----------------------------
 
-overview_tab, visual_tab, forecast_tab, ai_tab, sql_tab, data_tab = st.tabs(
+overview_tab, visual_tab, forecast_tab, assistant_tab, sql_tab, data_tab = st.tabs(
     [
-    "Overview",
-    "Visualizations",
-    "Forecasting",
-    "AI Assistant",
-    "SQL Explorer",
-    "Data Preview"
+        "Overview",
+        "Visualizations",
+        "Forecasting",
+        "Analytics Assistant",
+        "SQL Explorer",
+        "Data Preview"
     ]
 )
-
-# -----------------------------
-# Overview Tab
-# -----------------------------
 
 with overview_tab:
 
@@ -198,7 +186,7 @@ with overview_tab:
         col2.metric(
             numeric_columns[1],
             f"{filtered_df[numeric_columns[1]].sum():,.2f}"
-    )
+        )
 
     if "Order ID" in filtered_df.columns:
         total_orders = filtered_df["Order ID"].nunique()
@@ -232,10 +220,11 @@ with overview_tab:
             st.success(
                 f"{category_summary.iloc[0]['Category']} generated the highest sales at ${category_summary.iloc[0]['Sales']:,.2f}."
             )
-        st.subheader("AI Executive Business Report")
+
+    st.subheader("Executive Business Report")
 
     st.write(
-        "Generate an AI-powered executive summary report based on filtered business data."
+        "Generate an automated executive summary report based on filtered business data."
     )
 
     if st.button("Generate Business Report"):
@@ -243,21 +232,15 @@ with overview_tab:
         with st.spinner("Generating executive report..."):
 
             try:
-
                 report_summary = generate_business_summary(filtered_df)
 
-                st.success(
-                    "Business report generated successfully."
-                )
+                st.success("Business report generated successfully.")
 
                 st.write(report_summary)
 
-                pdf_path = generate_business_report(
-                    report_summary
-                )
+                pdf_path = generate_business_report(report_summary)
 
                 with open(pdf_path, "rb") as pdf_file:
-
                     st.download_button(
                         label="Download PDF Report",
                         data=pdf_file,
@@ -267,10 +250,6 @@ with overview_tab:
 
             except Exception as e:
                 st.error(f"Report generation error: {e}")
-
-# -----------------------------
-# Visualizations Tab
-# -----------------------------
 
 with visual_tab:
 
@@ -282,7 +261,7 @@ with visual_tab:
             numeric_columns
         )
 
-        if sidebar_date_column in filtered_df.columns:
+        if sidebar_date_column is not None and sidebar_date_column in filtered_df.columns:
             trend_data = (
                 filtered_df.groupby(sidebar_date_column)[selected_metric]
                 .sum()
@@ -332,61 +311,57 @@ with visual_tab:
             )
 
             st.plotly_chart(region_chart, use_container_width=True)
-    
-            if "Sales" in filtered_df.columns and "Profit" in filtered_df.columns:
-                scatter_chart = px.scatter(
-                    filtered_df,
-                    x="Sales",
-                    y="Profit",
-                    color="Category" if "Category" in filtered_df.columns else None,
-                    title="Sales vs Profit Analysis",
-                    hover_data=[
-                        col for col in ["Product Name", "Region", "Segment"]
-                        if col in filtered_df.columns
-                    ]
-                )
 
-                st.plotly_chart(scatter_chart, use_container_width=True)
+        if "Sales" in filtered_df.columns and "Profit" in filtered_df.columns:
+            scatter_chart = px.scatter(
+                filtered_df,
+                x="Sales",
+                y="Profit",
+                color="Category" if "Category" in filtered_df.columns else None,
+                title="Sales vs Profit Analysis",
+                hover_data=[
+                    col for col in ["Product Name", "Region", "Segment"]
+                    if col in filtered_df.columns
+                ]
+            )
 
-            if "Product Name" in filtered_df.columns and "Sales" in filtered_df.columns:
-                top_products = (
-                    filtered_df.groupby("Product Name")["Sales"]
-                    .sum()
-                    .sort_values(ascending=False)
-                    .head(10)
-                    .reset_index()
-                )
+            st.plotly_chart(scatter_chart, use_container_width=True)
 
-                top_products_chart = px.bar(
-                    top_products,
-                    x="Sales",
-                    y="Product Name",
-                    orientation="h",
-                    title="Top 10 Products by Sales"
-                )
+        if "Product Name" in filtered_df.columns and "Sales" in filtered_df.columns:
+            top_products = (
+                filtered_df.groupby("Product Name")["Sales"]
+                .sum()
+                .sort_values(ascending=False)
+                .head(10)
+                .reset_index()
+            )
 
-                st.plotly_chart(top_products_chart, use_container_width=True)
+            top_products_chart = px.bar(
+                top_products,
+                x="Sales",
+                y="Product Name",
+                orientation="h",
+                title="Top 10 Products by Sales"
+            )
 
-            if "Region" in filtered_df.columns and "Profit" in filtered_df.columns:
-                profit_region = (
-                    filtered_df.groupby("Region")["Profit"]
-                    .sum()
-                    .sort_values(ascending=False)
-                    .reset_index()
-                )
+            st.plotly_chart(top_products_chart, use_container_width=True)
 
-                profit_region_chart = px.bar(
-                    profit_region,
-                    x="Region",
-                    y="Profit",
-                    title="Profit by Region"
-                )
+        if "Region" in filtered_df.columns and "Profit" in filtered_df.columns:
+            profit_region = (
+                filtered_df.groupby("Region")["Profit"]
+                .sum()
+                .sort_values(ascending=False)
+                .reset_index()
+            )
 
-                st.plotly_chart(profit_region_chart, use_container_width=True)
+            profit_region_chart = px.bar(
+                profit_region,
+                x="Region",
+                y="Profit",
+                title="Profit by Region"
+            )
 
-# -----------------------------
-# Forecasting Tab
-# -----------------------------
+            st.plotly_chart(profit_region_chart, use_container_width=True)
 
 with forecast_tab:
 
@@ -444,13 +419,9 @@ with forecast_tab:
     else:
         st.info("Forecasting requires at least one date column and one numeric column.")
 
-# -----------------------------
-# AI Assistant Tab
-# -----------------------------
+with assistant_tab:
 
-with ai_tab:
-
-    st.subheader("AI Business Intelligence Assistant")
+    st.subheader("Business Intelligence Assistant")
 
     st.write(
         "Ask natural language questions about business performance, trends, KPIs, and forecasting insights."
@@ -461,7 +432,7 @@ with ai_tab:
         placeholder="Example: What are the strongest business trends in this dataset?"
     )
 
-    if st.button("Ask AI Assistant"):
+    if st.button("Ask Analytics Assistant"):
 
         if user_question.strip() == "":
             st.warning("Please enter a question first.")
@@ -469,15 +440,11 @@ with ai_tab:
         else:
             with st.spinner("Analyzing dataset..."):
                 try:
-                    ai_response = ask_ai_question(filtered_df, user_question)
-                    st.write(ai_response)
+                    assistant_response = ask_ai_question(filtered_df, user_question)
+                    st.write(assistant_response)
 
                 except Exception as e:
-                    st.error(f"AI assistant error: {e}")
-
-# -----------------------------
-# SQL Explorer Tab
-# -----------------------------
+                    st.error(f"Analytics assistant error: {e}")
 
 with sql_tab:
 
@@ -512,10 +479,6 @@ LIMIT 10
 
         except Exception as e:
             st.error(f"SQL Error: {e}")
-
-# -----------------------------
-# Data Preview Tab
-# -----------------------------
 
 with data_tab:
 
