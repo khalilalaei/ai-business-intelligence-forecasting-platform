@@ -11,7 +11,7 @@ from src.database import load_data_to_database, run_query
 from src.report_generator import generate_business_report
 
 st.set_page_config(
-    page_title="AI Business Intelligence Platform",
+    page_title="Business Intelligence Platform",
     layout="wide"
 )
 
@@ -63,9 +63,9 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("AI-Powered Business Intelligence & Forecasting Platform")
+st.title("Business Intelligence & Forecasting Platform")
 st.caption(
-    "Enterprise analytics platform featuring AI-powered forecasting, SQL querying, KPI dashboards, and executive reporting."
+    "Enterprise analytics platform featuring forecasting, SQL querying, KPI dashboards, and executive reporting."
 )
 
 st.write(
